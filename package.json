@@ -15,6 +15,7 @@
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "konva": "^9.3.15",
+    "pixi.js": "^8.4.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.12"
   }

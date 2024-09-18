@@ -2,7 +2,7 @@ import { getCountries } from "./services/info";
 import { Country } from "./types/types";
 
 const $ = (selector: string) => document.getElementById(selector);
-const menu = $("menu") as HTMLDivElement
+const menu = $("menu") as HTMLUListElement
 
 
 async function loadCountriesOnMenu() {
@@ -13,7 +13,6 @@ async function loadCountriesOnMenu() {
         menu.appendChild(div)
     })
 }
-
 
 loadCountriesOnMenu()
 
