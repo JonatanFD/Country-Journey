@@ -9,3 +9,14 @@ export async function getCountries() {
     console.log(error);
   }
 }
+
+
+export async function getRoutes() {
+  try {
+    const data = await fetch(API_URL + "routes");
+    const routes = await data.json();
+    return routes;
+  } catch (error) {
+    console.log(error);
+  }
+}

@@ -4,3 +4,9 @@ export interface Country {
     longitude: number;
     country: string;
 }
+
+export interface Route {
+    origin: Country;
+    destiny: Country;
+    distance: number;
+}
