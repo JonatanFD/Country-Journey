@@ -77,16 +77,10 @@ function drawLine(route: Route, layer: Konva.Layer) {
   layer.add(line);
 }
 
-export function loadRoutes(layer: Konva.Layer, routes: Route[][]) {
+export function loadRoutes(layer: Konva.Layer, routes: Route[]) {
   for (let i = 0; i < routes.length; i++) {
     const cityRoutes = routes[i];
-    for (let j = 0; j < cityRoutes.length; j++) {
-      const route = cityRoutes[j];
-
-      console.log(route);
-
-      drawLine(route, layer);
-    }
+    drawLine(cityRoutes, layer);
   }
 }
 
@@ -124,24 +118,29 @@ export function transformRoutes(dataRoutes: Route[][], cities: Country[]) {
 
   for (let i = 0; i < cities.length; i++) {
     const city = cities[i];
-    console.log(city);
     // @ts-ignore
     cityDict[hashCity(city)] = city;
   }
 
+  const RoutesSet = new Set<string>();
+  const filteredRoutes = [];
   for (let i = 0; i < dataRoutes.length; i++) {
     for (let j = 0; j < dataRoutes[i].length; j++) {
-      console.log(dataRoutes[i][j]);
 
       const origin = dataRoutes[i][j].origin
       const destiny = dataRoutes[i][j].destiny;
       
+      if (RoutesSet.has(origin.city + destiny.city) || RoutesSet.has(destiny.city + origin.city)) {
+        continue;
+      }      
+      RoutesSet.add(origin.city + destiny.city);
       // @ts-ignore
       dataRoutes[i][j].origin = cityDict[hashCity(origin)];
       // @ts-ignore
       dataRoutes[i][j].destiny = cityDict[hashCity(destiny)];
+
+      filteredRoutes.push(dataRoutes[i][j]);
     }
   }
-
-  return dataRoutes;
+  return filteredRoutes;
 }
