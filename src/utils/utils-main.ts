@@ -1,6 +1,5 @@
 import { Stage } from "konva/lib/Stage";
 import { Vector2d } from "konva/lib/types";
-import { getCountries, getRoutes } from "../services/info";
 import { Country, Route } from "../types/types";
 import Konva from "konva";
 
@@ -40,21 +39,9 @@ export function zoom(stage: Stage) {
 }
 
 function drawCircle(country: Country, layer: Konva.Layer) {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const scaleFactor = 10;
-
-  const x =
-    (country.longitude + 180) * (width / 360) * scaleFactor -
-    (width * scaleFactor) / 3; // Conversión longitud a X
-    
-  const y =    height / 2 - Math.log(Math.tan(Math.PI / 4 + (country.latitude * Math.PI) / 180 / 2)) *      (width / (2 * Math.PI)) *
-      scaleFactor -
-    height;
-
   var circle = new Konva.Circle({
-    x,
-    y,
+    x: country.longitude,
+    y: country.latitude,
     radius: 5,
     fill: "white",
   });
@@ -67,45 +54,21 @@ function drawCircle(country: Country, layer: Konva.Layer) {
   // add the shape to the layer
   layer.add(circle);
 }
-
-export async function loadCountriesOnCanva(layer: Konva.Layer) {
-  try {
-    const countries = (await getCountries()) as Country[];
-    countries.forEach((country) => drawCircle(country, layer));
-  } catch (error) {
-    console.log("Error");
-  }
+export function loadCountriesOnCanva(layer: Konva.Layer, cities: Country[]) {
+  cities.forEach((city) => drawCircle(city, layer));
 }
 
+
 function drawLine(route: Route, layer: Konva.Layer) {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const scaleFactor = 10;
-
-  const { destiny, origin } = route;
-
-  const x1 =
-    (origin.longitude + 180) * (width / 360) * scaleFactor -
-    (width * scaleFactor) / 3; // Conversión longitud a X
-  const y1 =
-    height / 2 -
-    Math.log(Math.tan(Math.PI / 4 + (origin.latitude * Math.PI) / 180 / 2)) *
-      (width / (2 * Math.PI)) *
-      scaleFactor -
-    height;
-
-  const x2 =
-    (destiny.longitude + 180) * (width / 360) * scaleFactor -
-    (width * scaleFactor) / 3; // Conversión longitud a X
-  const y2 =
-    height / 2 -
-    Math.log(Math.tan(Math.PI / 4 + (destiny.latitude * Math.PI) / 180 / 2)) *
-      (width / (2 * Math.PI)) *
-      scaleFactor -
-    height;
+  const points = [
+    route.origin.longitude,
+    route.origin.latitude,
+    route.destiny.longitude,
+    route.destiny.latitude,
+  ];
 
   var line = new Konva.Line({
-    points: [x1, y1, x2, y2],
+    points,
     stroke: "blue",
     strokeWidth: 1,
   });
@@ -114,21 +77,71 @@ function drawLine(route: Route, layer: Konva.Layer) {
   layer.add(line);
 }
 
-export async function loadRoutes(layer: Konva.Layer) {
-  try {
-    const routes = (await getRoutes()) as Route[][];
+export function loadRoutes(layer: Konva.Layer, routes: Route[][]) {
+  for (let i = 0; i < routes.length; i++) {
+    const cityRoutes = routes[i];
+    for (let j = 0; j < cityRoutes.length; j++) {
+      const route = cityRoutes[j];
 
-    for (let i = 0; i < routes.length; i++) {
-      const cityRoutes = routes[i];
-      for (let j = 0; j < cityRoutes.length; j++) {
-        const route = cityRoutes[j];
+      console.log(route);
 
-        console.log(route);
-
-        drawLine(route, layer);
-      }
+      drawLine(route, layer);
     }
-  } catch (error) {
-    console.log(error);
   }
+}
+
+export function transformToMercator(countries: Country[]) {
+  for (let i = 0; i < countries.length; i++) {
+    const country = countries[i];
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const scaleFactor = 20;
+
+    const x =
+      (country.longitude + 180) * (width / 360) * scaleFactor -
+      (width * scaleFactor) / 3; // Conversión longitud a X
+
+    const y =
+      height / 2 -
+      Math.log(Math.tan(Math.PI / 4 + (country.latitude * Math.PI) / 180 / 2)) *
+        (width / (2 * Math.PI)) *
+        scaleFactor -
+      height;
+
+    country.latitude = y;
+    country.longitude = x;
+  }
+
+  return countries;
+}
+
+function hashCity(city: Country): string {
+  return city.city + city.country;
+}
+
+export function transformRoutes(dataRoutes: Route[][], cities: Country[]) {
+  const cityDict = {};
+
+  for (let i = 0; i < cities.length; i++) {
+    const city = cities[i];
+    console.log(city);
+    // @ts-ignore
+    cityDict[hashCity(city)] = city;
+  }
+
+  for (let i = 0; i < dataRoutes.length; i++) {
+    for (let j = 0; j < dataRoutes[i].length; j++) {
+      console.log(dataRoutes[i][j]);
+
+      const origin = dataRoutes[i][j].origin
+      const destiny = dataRoutes[i][j].destiny;
+      
+      // @ts-ignore
+      dataRoutes[i][j].origin = cityDict[hashCity(origin)];
+      // @ts-ignore
+      dataRoutes[i][j].destiny = cityDict[hashCity(destiny)];
+    }
+  }
+
+  return dataRoutes;
 }

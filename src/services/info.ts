@@ -1,6 +1,6 @@
 import { API_URL } from "../utils/constants";
 
-export async function getCountries() {
+export async function getCities() {
   try {
     const data = await fetch(API_URL + "countries");
     const countries = await data.json();
