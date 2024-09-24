@@ -1,4 +1,4 @@
-import { getCountries } from "./services/info";
+import { getCountries } from "./services/service";
 import { Country } from "./types/types";
 
 const $ = (selector: string) => document.getElementById(selector);

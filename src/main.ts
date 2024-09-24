@@ -1,9 +1,9 @@
 import Konva from "konva";
 import { CANVA_ELEMENT } from "./utils/constants";
 import "./style.css";
-import { loadCountriesOnCanva, loadRoutes, transformRoutes, transformToMercator, zoom } from "./utils/utils-main";
-import { getCities, getRoutes } from "./services/info";
-import { Country, Route } from "./types/types";
+import { loadCountriesOnCanva, loadRoutes, transformRoutes, zoom } from "./utils/utils-main";
+import { getCities, getRoutes } from "./services/service";
+import { City, RoutesData } from "./types/types";
 
 var stage = new Konva.Stage({
   container: CANVA_ELEMENT, // id of container <div>
@@ -14,14 +14,13 @@ var stage = new Konva.Stage({
 
 var layer = new Konva.Layer();
 
-const dataCities = await getCities() as Country[]
-const routesData = await getRoutes() as Route[][]
+const dataCities = await getCities() as City[]
+const routesData = await getRoutes() as RoutesData
 
-const cities = transformToMercator(dataCities)
-const routes = transformRoutes(routesData, cities)
+const routes = transformRoutes(routesData, dataCities)
 
 loadRoutes(layer, routes);
-loadCountriesOnCanva(layer, cities);
+loadCountriesOnCanva(layer, dataCities);
 
 zoom(stage);
 stage.add(layer);

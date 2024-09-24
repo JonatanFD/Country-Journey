@@ -1,12 +1,20 @@
-export interface Country {
+export interface City {
     city: string;
+    country: string;
     latitude: number;
     longitude: number;
-    country: string;
 }
 
 export interface Route {
-    origin: Country;
-    destiny: Country;
+    from: City;
+    to: City;
+    distance: number;
+}
+
+export type RoutesData = RouteData[]
+
+export interface RouteData {
+    from: string;
+    to: string;
     distance: number;
 }
