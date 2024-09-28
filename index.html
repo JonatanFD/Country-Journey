@@ -1,18 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="./src/style.css" />
     <title>Complejidad Algoritmica</title>
   </head>
-  <body class="absolute">
-    <ul id="menu" class="absolute top-0 z-30">
-      <li>Current : <span id="current"></span></li>
-    </ul>
+  <body class="relative">
+    <main id="menu" class="absolute top-4 left-4 z-30">
+      <form class="w-full h-full" id="form">
+        <section class="bg-[#18181A] p-4 flex flex-col gap-3 rounded-md">
+          <h2 class="h-5 font-semibold text-xl">Viaje</h2>
 
-    <section id="canva"></section>
+          <div class="flex items-center gap-2">
+            <input type="text" id="from" name="from" class="flex h-10 w-full rounded-md border border-[#a5a5a5] bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1" placeholder="Punto de partida" />
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              class="absolute right-8"
+            >
+              <path
+                d="M10.862 6.19534L7.99998 9.05734L5.13798 6.19534L4.19531 7.13801L7.99998 10.9427L11.8046 7.13801L10.862 6.19534Z"
+                fill="white"
+              />
+            </svg>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="text" id="to" name="to" class="flex h-10 w-full rounded-md border border-[#a5a5a5] bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1" placeholder="Punto de destino" />
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              class="absolute right-8"
+            >
+              <path
+                d="M10.862 6.19534L7.99998 9.05734L5.13798 6.19534L4.19531 7.13801L7.99998 10.9427L11.8046 7.13801L10.862 6.19534Z"
+                fill="white"
+              />
+            </svg>
+          </div>
+
+          <h2 class="h-5 font-semibold text-xl">Filtro</h2>
+          <label class="text-sm">
+            <h3>País (es)</h3>
+            <input type="text" id="filters" name="filters" class="flex h-10 w-full rounded-md border border-[#a5a5a5] bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-1" />
+          </label>
+        </section>
+
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#fefefe] text-black w-full hover:bg-primary/90 h-10 px-4 py-2">Buscar</button>
+      </form>
+    </main>
+
+    <section id="canva" class="absolute"></section>
 
     <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/ui.ts"></script>
   </body>
 </html>
