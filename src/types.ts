@@ -6,15 +6,16 @@ export interface City {
 }
 
 export interface Route {
-    from: City;
-    to: City;
-    distance: number;
-}
-
-export type RoutesData = RouteData[]
-
-export interface RouteData {
     from: string;
     to: string;
     distance: number;
+}
+
+export interface CategoryStatus {
+    open: boolean;
+    inputType: "city" | "country";
+    searchValue: string;
+    countries: string[];
+    from: string,
+    to: string
 }

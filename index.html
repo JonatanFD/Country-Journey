@@ -9,12 +9,29 @@
         <title>Complejidad Algoritmica</title>
     </head>
     <body class="relative">
-        <main id="menu" class="absolute top-4 left-4 z-30 flex gap-4">
-            <form class="w-full h-full" id="form">
+        <main id="menu" class="absolute top-4 left-4 z-30 gap-4 flex">
+            <form class="h-full w-fit" id="form">
                 <section
                     class="bg-[#18181A] p-4 flex flex-col gap-3 rounded-md"
                 >
-                    <h2 class="h-5 font-semibold text-xl">Viaje</h2>
+                    <h2
+                        class="h-5 font-semibold text-xl flex items-center gap-2"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            style="fill: white"
+                            class="inline"
+                        >
+                            <path
+                                d="M3 18h18v2H3zm18.509-9.473a1.61 1.61 0 0 0-2.036-1.019L15 9 7 6 5 7l6 4-4 2-4-2-1 1 4 4 14.547-5.455a1.611 1.611 0 0 0 .962-2.018z"
+                            ></path>
+                        </svg>
+
+                        Viaje
+                    </h2>
 
                     <label>
                         <h3 class="mb-2">Punto de partida</h3>
@@ -26,6 +43,7 @@
                                 id="from"
                                 name="from"
                                 placeholder="Ej: Lima"
+                                required
                             />
                             <svg
                                 width="16"
@@ -52,6 +70,7 @@
                                 id="to"
                                 name="to"
                                 placeholder="Ej: Arequipa"
+                                required
                             />
                             <svg
                                 width="16"
@@ -68,7 +87,23 @@
                         </div>
                     </label>
 
-                    <h2 class="h-5 font-semibold text-xl">Filtro</h2>
+                    <h2
+                        class="h-5 font-semibold text-xl flex items-center gap-2"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            style="fill: white"
+                        >
+                            <path
+                                d="M13 20v-4.586L20.414 8c.375-.375.586-.884.586-1.415V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v2.585c0 .531.211 1.04.586 1.415L11 15.414V22l2-2z"
+                            ></path>
+                        </svg>
+
+                        Filtro
+                    </h2>
                     <label class="text-sm">
                         <h3 class="mb-2">País (es)</h3>
                         <input
@@ -77,8 +112,11 @@
                             name="filters"
                             placeholder="Ej: Chile, Bolivia"
                             autocapitalize="off"
+                            class="text-ellipsis"
                         />
                     </label>
+
+                    <ul id="countries-filters"></ul>
                 </section>
 
                 <button
@@ -87,10 +125,24 @@
                     Buscar
                 </button>
             </form>
+
+            <section
+                class="bg-[#18181A] flex flex-col gap-3 rounded-md hidden max-h-[500px] w-[300px]"
+                id="category"
+            >
+                <h2
+                    class="h-5 font-semibold text-xl m-4"
+                    id="category-title"
+                ></h2>
+                <ul
+                    id="category-list"
+                    class="p-4 overflow-auto flex-col flex gap-1"
+                ></ul>
+            </section>
         </main>
 
         <section id="canva" class="absolute"></section>
-        <script type="module" src="/src/main.ts"></script>
-        <script type="module" src="/src/ui.ts"></script>
+        <script type="module" src="/src/konva.ts" defer></script>
+        <script type="module" src="/src/ui.ts" defer></script>
     </body>
 </html>
