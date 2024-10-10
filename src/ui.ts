@@ -1,4 +1,5 @@
 import { getCitiesData } from "./konva";
+import { getJourney } from "./services/services";
 import { CategoryStatus } from "./types";
 import { $, $id } from "./utils";
 
@@ -8,12 +9,11 @@ const FORM = $("form") as HTMLFormElement;
 const FROM = $id("from") as HTMLInputElement;
 const TO = $id("to") as HTMLInputElement;
 const FILTERS = $id("filters") as HTMLInputElement;
-const COUNTRIES_FILTERS = $id("countries-filters") as HTMLDivElement;
 
 const inputs = [FROM, TO, FILTERS];
-const countries = getCitiesData();
+const cities = getCitiesData();
 
-const CATEGORY_STATE: CategoryStatus = {
+const JOURNEY_FORM_STATE: CategoryStatus = {
     open: false,
     inputType: "city",
     searchValue: "",
@@ -23,7 +23,7 @@ const CATEGORY_STATE: CategoryStatus = {
 };
 
 // Functions
-const toggleCategoryMenu = (open: boolean) => {
+const displayCategoryMenu = (open: boolean) => {
     const CATEGORY = $id("category") as HTMLElement;
     if (open) {
         CATEGORY.classList.remove("hidden");
@@ -41,7 +41,7 @@ const updateCountriesFilters = () => {
     FILTERS.value = "";
 
     let filtersValue: string = "";
-    CATEGORY_STATE.countries.forEach((country) => {
+    JOURNEY_FORM_STATE.countries.forEach((country) => {
         filtersValue += `${country}, `;
     });
 
@@ -54,27 +54,27 @@ const updateCategoryMenuOptions = (selectedInput: HTMLInputElement) => {
     let options: string[] = [];
 
     // se obtienen las opciones
-    if (CATEGORY_STATE.inputType === "country") {
-        console.log(CATEGORY_STATE.searchValue);
+    if (JOURNEY_FORM_STATE.inputType === "country") {
+        console.log(JOURNEY_FORM_STATE.searchValue);
 
         options = [
             ...new Set(
-                countries
-                    .filter((country) =>
-                        country.country
+                cities
+                    .filter((city) =>
+                        city.country
                             .toLowerCase()
-                            .includes(CATEGORY_STATE.searchValue.toLowerCase())
+                            .includes(JOURNEY_FORM_STATE.searchValue.toLowerCase())
                     )
                     .map((opt) => opt.country)
             ),
         ];
-    } else if (CATEGORY_STATE.inputType === "city") {
+    } else if (JOURNEY_FORM_STATE.inputType === "city") {
         const cities = getCitiesData().filter((city) =>
             city.city
                 .toLowerCase()
-                .includes(CATEGORY_STATE.searchValue.toLowerCase())
+                .includes(JOURNEY_FORM_STATE.searchValue.toLowerCase())
         );
-        options = cities.map((city) => city.city);
+        options = cities.map((city) => city.city + "," + city.country);
     }
 
     // se renderizan las opciones
@@ -86,14 +86,14 @@ const updateCategoryMenuOptions = (selectedInput: HTMLInputElement) => {
 
         const showSelectedOption = () => {
             if (inputId === "from" || inputId === "to") {
-                if (option === CATEGORY_STATE[inputId]) {
+                if (option === JOURNEY_FORM_STATE[inputId]) {
                     button.classList.add("bg-zinc-600");
                     button.classList.add("hover:bg-zinc-600");
                 }
             } else {
                 // Para los filtros
                 if (
-                    CATEGORY_STATE.countries.find(
+                    JOURNEY_FORM_STATE.countries.find(
                         (country) => country === option
                     )
                 ) {
@@ -127,24 +127,26 @@ const updateCategoryMenuOptions = (selectedInput: HTMLInputElement) => {
         button.addEventListener("click", () => {
             removePrevSelectedOption();
             selectedInput.value = option;
+            // para los puntos de origen y destino
             if (inputId === "from" || inputId === "to") {
-                CATEGORY_STATE[selectedInput.id.toString() as "from" | "to"] =
+                JOURNEY_FORM_STATE[selectedInput.id.toString() as "from" | "to"] =
                     option;
+
             } else {
                 // Para los filtros
                 if (
-                    CATEGORY_STATE.countries.find(
+                    JOURNEY_FORM_STATE.countries.find(
                         (country) => country === option
                     )
                 ) {
-                    CATEGORY_STATE.countries.splice(
-                        CATEGORY_STATE.countries.indexOf(option),
+                    JOURNEY_FORM_STATE.countries.splice(
+                        JOURNEY_FORM_STATE.countries.indexOf(option),
                         1
                     );
 
                     removePrevSelectedOption(option);
                 } else {
-                    CATEGORY_STATE.countries.push(option);
+                    JOURNEY_FORM_STATE.countries.push(option);
                     updateCountriesFilters();
                 }
             }
@@ -163,20 +165,40 @@ inputs.forEach((input) => {
         const target = e.target as HTMLInputElement;
         const value = target.value;
 
-        CATEGORY_STATE.searchValue = value;
+        JOURNEY_FORM_STATE.searchValue = value;
 
-        toggleCategoryMenu(true);
+        displayCategoryMenu(true);
 
-        CATEGORY_STATE.inputType = target.id === "filters" ? "country" : "city";
+        JOURNEY_FORM_STATE.inputType = target.id === "filters" ? "country" : "city";
 
         updateCategoryMenuOptions(input);
     });
     input.addEventListener("focus", (e) => {
         const target = e.target as HTMLInputElement;
 
-        CATEGORY_STATE.inputType = target.id === "filters" ? "country" : "city";
-        updateCategoryMenu(CATEGORY_STATE);
+        JOURNEY_FORM_STATE.inputType = target.id === "filters" ? "country" : "city";
+        updateCategoryMenu(JOURNEY_FORM_STATE);
         updateCategoryMenuOptions(input);
-        toggleCategoryMenu(true);
+        displayCategoryMenu(true);
     });
+});
+
+FORM.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log(cities);
+    
+    const journeyConstrains = {
+        from: JOURNEY_FORM_STATE.from,
+        to: JOURNEY_FORM_STATE.to,
+        countries: JOURNEY_FORM_STATE.countries,
+    }
+
+    try {
+        const journey = await getJourney(journeyConstrains);
+        console.log( "get journey", journey);
+    } catch (error) {
+        console.log(error);
+    }
+
+
 });

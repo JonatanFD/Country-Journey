@@ -19,3 +19,9 @@ export interface CategoryStatus {
     from: string,
     to: string
 }
+
+export interface JourneyConstrains {
+    from: string;
+    to: string;
+    countries: string[];
+}
